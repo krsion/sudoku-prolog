@@ -6,14 +6,14 @@ firstColumn(Matrix, Head, Tail) :-
 
 row(Size, PrevRows, Result) :- row(Size, 0, PrevRows, [], Result).
 row(N, N, _,X,X).
-row(N, ColIndex, PrevRows, Accumulator, Result) :-
-    between(1,N,X),
+row(Size, ColIndex, PrevRows, Accumulator, Result) :-
+    between(1, Size, X),
     \+ member(X, Accumulator),
     firstColumn(PrevRows, Col, Rows),
     \+ member(X, Col),
     R is ColIndex+1,
     append(Accumulator, [X], Acc),
-    row(N, R, Rows, Acc, Result).
+    row(Size, R, Rows, Acc, Result).
 
 ltn([X,Y, Z]) :-
     row(3, [], X),
