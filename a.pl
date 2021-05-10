@@ -18,6 +18,8 @@ row(Size, RowIndex, ColIndex, PrevRows, Accumulator, Result) :-
     \+ member(X, Accumulator),
     nthColumn(PrevRows, ColIndex, Col),
     \+ member(X, Col),
+    block(PrevRows, ColIndex, RowIndex, 2, Block),
+    \+ member(X, Block),
     NewColIndex is ColIndex+1,
     append(Accumulator, [X], Acc),
     row(Size, RowIndex, NewColIndex, PrevRows, Acc, Result).
@@ -36,6 +38,21 @@ latinSquare(Size, RowIndex, Accumulator, Result) :-
     row(Size, RowIndex, Accumulator, Xs),
     NewRowIndex is RowIndex+1,
     latinSquare(Size, NewRowIndex, [Xs|Accumulator], Result).
+
+
+block(PrevRows, ColumnIndex, RowIndex, BlockSideLength, Result) :-
+    reverse(PrevRows, ReversedPrevRows),
+    N is RowIndex mod BlockSideLength,
+    firstNRows(ReversedPrevRows, N, LastNRows, _),
+    A is ColumnIndex - (ColumnIndex mod BlockSideLength),
+    firstNColumns(LastNRows, A, _, TrimmedFromLeft),
+    transpose(TrimmedFromLeft, TFLT),
+    firstNColumns(TFLT, BlockSideLength, AlmostResult, _),
+    flatten(AlmostResult, Result).
+    
+
+
+    
 
 
 firstNRows(X, 0, [], X) :- !.

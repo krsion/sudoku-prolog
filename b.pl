@@ -1,3 +1,4 @@
+% sudoku(-Xss, +Size) :- Size must be a square of a natural number (4,9,16,...)
 sudoku(Xss, Size) :- 
     sudoku(Size, 0, [], Xss).
 sudoku(Size, Size, Result, Result).
@@ -6,13 +7,13 @@ sudoku(Size, RowIndex, Accumulator, Result) :-
     NewRowIndex is RowIndex+1,
     sudoku(Size, NewRowIndex, [Xs|Accumulator], Result).
 
-
+% row(+Size, +RowIndex, +PrevRows, -Result)
 row(Size, RowIndex, PrevRows, Result) :- row(Size, RowIndex, 0, PrevRows, [], Result).
 row(Size, _, Size, _, Result, Result).
 row(Size, RowIndex, ColIndex, PrevRows, Accumulator, Result) :-
     between(1, Size, X),
     block(PrevRows, ColIndex, RowIndex, 3, Block),
-    \+ member(X, Block),
+    %\+ member(X, Block), % Toto je uzke hrdlo programu, po odkomentovani trva ?-sudoku(X,9) nekonecne dlouho
     \+ member(X, Accumulator),
     nthColumn(PrevRows, ColIndex, Col),
     \+ member(X, Col),
