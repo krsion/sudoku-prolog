@@ -4,23 +4,29 @@ firstColumn(Matrix, Head, Tail) :-
     maplist(head, Matrix, Head),
     maplist(tail, Matrix, Tail).
 
-row(_, 0, _,X,X).
-row(N, Remaining, PrevRows, Accumulator, Result) :-
+row(Size, PrevRows, Result) :- row(Size, 0, PrevRows, [], Result).
+row(N, N, _,X,X).
+row(N, ColIndex, PrevRows, Accumulator, Result) :-
     between(1,N,X),
     \+ member(X, Accumulator),
     firstColumn(PrevRows, Col, Rows),
     \+ member(X, Col),
-    R is Remaining-1,
+    R is ColIndex+1,
     append(Accumulator, [X], Acc),
     row(N, R, Rows, Acc, Result).
 
-latinSquare(Xss, N) :- 
-    latinSquare([], N, N, Xss).
-latinSquare(Xss, 0, _, Xss).
-latinSquare(Xss, N, M, Yss) :-
-    row(M, M, Xss, [], Xs),
-    N1 is N-1,
-    latinSquare([Xs|Xss], N1, M, Yss).
+ltn([X,Y, Z]) :-
+    row(3, [], X),
+    row(3, [X], Y),
+    row(3, [X,Y], Z).
+
+latinSquare(Xss, Size) :- 
+    latinSquare(Size, 0, [], Xss).
+latinSquare(Size, Size, Result, Result).
+latinSquare(Size, RowIndex, Accumulator, Result) :-
+    row(Size, Accumulator, Xs),
+    NewRowIndex is RowIndex+1,
+    latinSquare(Size, NewRowIndex, [Xs|Accumulator], Result).
 
 
 firstNRows(X, 0, [], X) :- !.
