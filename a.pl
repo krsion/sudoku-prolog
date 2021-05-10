@@ -1,30 +1,39 @@
 head([X|_], X).
 tail([_|Xs], Xs).
+
 firstColumn(Matrix, Head, Tail) :-
     maplist(head, Matrix, Head),
     maplist(tail, Matrix, Tail).
 
-row(Size, PrevRows, Result) :- row(Size, 0, PrevRows, [], Result).
-row(N, N, _,X,X).
-row(Size, ColIndex, PrevRows, Accumulator, Result) :-
+nthColumn(Matrix, N, NthColumn) :-
+    length(Matrix, Len),
+    length(ListOfNs, Len),
+    maplist(=(N), ListOfNs),
+    maplist(nth0, ListOfNs, Matrix, NthColumn).
+
+row(Size, RowIndex, PrevRows, Result) :- row(Size, RowIndex, 0, PrevRows, [], Result).
+row(Size, _, Size, _, Result, Result).
+row(Size, RowIndex, ColIndex, PrevRows, Accumulator, Result) :-
     between(1, Size, X),
     \+ member(X, Accumulator),
-    firstColumn(PrevRows, Col, Rows),
+    nthColumn(PrevRows, ColIndex, Col),
     \+ member(X, Col),
-    R is ColIndex+1,
+    NewColIndex is ColIndex+1,
     append(Accumulator, [X], Acc),
-    row(Size, R, Rows, Acc, Result).
+    row(Size, RowIndex, NewColIndex, PrevRows, Acc, Result).
+
+
 
 ltn([X,Y, Z]) :-
-    row(3, [], X),
-    row(3, [X], Y),
-    row(3, [X,Y], Z).
+    row(3, 0, [], X),
+    row(3, 1, [X], Y),
+    row(3, 2, [X,Y], Z).
 
 latinSquare(Xss, Size) :- 
     latinSquare(Size, 0, [], Xss).
 latinSquare(Size, Size, Result, Result).
 latinSquare(Size, RowIndex, Accumulator, Result) :-
-    row(Size, Accumulator, Xs),
+    row(Size, RowIndex, Accumulator, Xs),
     NewRowIndex is RowIndex+1,
     latinSquare(Size, NewRowIndex, [Xs|Accumulator], Result).
 
